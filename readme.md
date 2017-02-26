@@ -16,7 +16,10 @@ npm install remark-html-emoji-image
 var remark = require('remark');
 var htmlEmojiImage = require('remark-html-emoji-image');
 
-var doc = remark().use(htmlEmojiImage).processSync('😄 👍');
+var doc = remark()
+  .use(htmlEmojiImage, {base: 'https://example.com/'})
+  .processSync('😄 👍')
+  .toString();
 
 console.log(doc);
 ```
@@ -24,15 +27,24 @@ console.log(doc);
 Yields:
 
 ```md
-![](http://www.tortue.me/emoji/smile.png ":smile:") ![](http://www.tortue.me/emoji/+1.png ":+1:")
+![](https://example.com/smile.png ":smile:") ![](https://example.com/+1.png ":+1:")
 ```
 
 ## API
 
-### `remark().use(htmlEmojiImage)`
+### `remark().use(htmlEmojiImage[, options])`
 
-Transform emoji unicodes into html images
-  (like 😄 into `![](http://www.tortue.me/emoji/smile.png ":smile:")`).
+Transform emoji unicodes into html images (like 😄 into
+`![](http://example.com/smile.png ":smile:")`).
+
+###### `options.base`
+
+`string` — Required base URL to use for emoji images.
+
+###### `options.extname`
+
+`string`, default: `.png` — Optional extension (with dot) to use after
+the emoji name.
 
 ## License
 
