@@ -81,7 +81,7 @@ function transformer(tree) {
                     },
                     'htmlContent': ''
                 },
-                'src': emojiBaseUrl + matchGemoji.name + '.png',
+                'url': emojiBaseUrl + matchGemoji.name + '.png',
                 'title': ':' + matchGemoji.name + ':'
             };
             definition.push(image);

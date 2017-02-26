@@ -30,10 +30,10 @@ test('remark-html-emoji-image', function (t) {
     processor.process([
         '😄',
         ''
-    ].join('\n'), function (err, file, doc) {
+    ].join('\n'), function (err, file) {
         t.ifErr(err);
 
-        t.equal(doc, [
+        t.equal(String(file), [
             '![](http://www.tortue.me/emoji/smile.png ":smile:")',
             ''
         ].join('\n'));
@@ -47,10 +47,10 @@ test('remark-html-emoji-image', function (t) {
         'a 👍 b',
         'a👍b',
         ''
-    ].join('\n'), function (err, file, doc) {
+    ].join('\n'), function (err, file) {
         t.ifErr(err);
 
-        t.equal(doc, [
+        t.equal(String(file), [
             'a![](http://www.tortue.me/emoji/smile.png ":smile:") ',
             '![](http://www.tortue.me/emoji/+1.png ":+1:") b',
             '![](http://www.tortue.me/emoji/smile.png ":smile:")a ',

@@ -12,19 +12,13 @@ npm install remark-html-emoji-image
 
 ## Usage
 
-Dependencies:
-
 ```javascript
 var remark = require('remark');
 var htmlEmojiImage = require('remark-html-emoji-image');
-```
 
-Process:
+var doc = remark().use(htmlEmojiImage).processSync('😄 👍');
 
-```javascript
-var doc = remark().use(htmlEmojiImage).process([
-    '😄 👍'
-].join('\n'));
+console.log(doc);
 ```
 
 Yields:
