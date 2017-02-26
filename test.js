@@ -2,17 +2,16 @@
 
 var test = require('tape');
 var remark = require('remark');
-var htmlEmojiImage = require('./index.js');
-
-var processor = remark().use(htmlEmojiImage);
+var html = require('remark-html');
+var htmlEmojiImage = require('./');
 
 test('remark-html-emoji-image', function (t) {
-  processor.process('😄', function (err, file) {
+  remark().use(htmlEmojiImage).process('😄', function (err, file) {
     t.ifErr(err);
     t.equal(String(file), '![](http://www.tortue.me/emoji/smile.png ":smile:")\n');
   });
 
-  processor.process([
+  remark().use(htmlEmojiImage).process([
     'a😄 ',
     '👍 b',
     '😄a ',
@@ -21,7 +20,7 @@ test('remark-html-emoji-image', function (t) {
     'a👍b',
     ''
   ].join('\n'), function (err, file) {
-    t.ifErr(err);
+    t.ifErr(err, 'should not fail');
 
     t.equal(String(file), [
       'a![](http://www.tortue.me/emoji/smile.png ":smile:") ',
@@ -31,7 +30,33 @@ test('remark-html-emoji-image', function (t) {
       'a ![](http://www.tortue.me/emoji/+1.png ":+1:") b',
       'a![](http://www.tortue.me/emoji/+1.png ":+1:")b',
       ''
-    ].join('\n'));
+    ].join('\n'), 'should work');
+  });
+
+  remark().use(htmlEmojiImage).use(html).process([
+    'a😄 ',
+    '👍 b',
+    '😄a ',
+    'b 👍',
+    'a 👍 b',
+    'a👍b',
+    ''
+  ].join('\n'), function (err, file) {
+    t.ifErr(err, 'should not fail');
+
+    t.equal(
+      String(file),
+      [
+        '<p>a<img src="http://www.tortue.me/emoji/smile.png" alt=":smile:" title=":smile:" align="absmiddle" class="emoji">',
+        '<img src="http://www.tortue.me/emoji/+1.png" alt=":+1:" title=":+1:" align="absmiddle" class="emoji"> b',
+        '<img src="http://www.tortue.me/emoji/smile.png" alt=":smile:" title=":smile:" align="absmiddle" class="emoji">a',
+        'b <img src="http://www.tortue.me/emoji/+1.png" alt=":+1:" title=":+1:" align="absmiddle" class="emoji">',
+        'a <img src="http://www.tortue.me/emoji/+1.png" alt=":+1:" title=":+1:" align="absmiddle" class="emoji"> b',
+        'a<img src="http://www.tortue.me/emoji/+1.png" alt=":+1:" title=":+1:" align="absmiddle" class="emoji">b</p>',
+        ''
+      ].join('\n'),
+      'should transform to HTML'
+    );
   });
 
   t.end();
