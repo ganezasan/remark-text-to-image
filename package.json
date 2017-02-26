@@ -9,6 +9,7 @@
     "image"
   ],
   "dependencies": {
+    "escape-string-regexp": "^1.0.5",
     "gemoji": "^4.0.0",
     "unist-util-visit": "^1.0.0"
   },
@@ -39,7 +40,10 @@
     "test": "npm run build && npm run lint && npm run test-coverage"
   },
   "xo": {
-    "space": true
+    "space": true,
+    "rules": {
+      "guard-for-in": "off"
+    }
   },
   "remarkConfig": {
     "plugins": [
