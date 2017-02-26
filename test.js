@@ -1,19 +1,4 @@
-/**
- * @author jackycute
- * @copyright 2016 jackycute
- * @license MIT
- * @module remark:gemoji
- * @fileoverview
- *   Plug-in to transform emoji unicodes into html images
- */
-
 'use strict';
-
-/* eslint-env node */
-
-/*
- * Dependencies.
- */
 
 var test = require('tape');
 var remark = require('remark');
@@ -21,45 +6,33 @@ var htmlEmojiImage = require('./index.js');
 
 var processor = remark().use(htmlEmojiImage);
 
-/*
- * Tests.
- */
-
 test('remark-html-emoji-image', function (t) {
+  processor.process('😄', function (err, file) {
+    t.ifErr(err);
+    t.equal(String(file), '![](http://www.tortue.me/emoji/smile.png ":smile:")\n');
+  });
 
-    processor.process([
-        '😄',
-        ''
-    ].join('\n'), function (err, file) {
-        t.ifErr(err);
+  processor.process([
+    'a😄 ',
+    '👍 b',
+    '😄a ',
+    'b 👍',
+    'a 👍 b',
+    'a👍b',
+    ''
+  ].join('\n'), function (err, file) {
+    t.ifErr(err);
 
-        t.equal(String(file), [
-            '![](http://www.tortue.me/emoji/smile.png ":smile:")',
-            ''
-        ].join('\n'));
-    });
+    t.equal(String(file), [
+      'a![](http://www.tortue.me/emoji/smile.png ":smile:") ',
+      '![](http://www.tortue.me/emoji/+1.png ":+1:") b',
+      '![](http://www.tortue.me/emoji/smile.png ":smile:")a ',
+      'b ![](http://www.tortue.me/emoji/+1.png ":+1:")',
+      'a ![](http://www.tortue.me/emoji/+1.png ":+1:") b',
+      'a![](http://www.tortue.me/emoji/+1.png ":+1:")b',
+      ''
+    ].join('\n'));
+  });
 
-    processor.process([
-        'a😄 ',
-        '👍 b',
-        '😄a ',
-        'b 👍',
-        'a 👍 b',
-        'a👍b',
-        ''
-    ].join('\n'), function (err, file) {
-        t.ifErr(err);
-
-        t.equal(String(file), [
-            'a![](http://www.tortue.me/emoji/smile.png ":smile:") ',
-            '![](http://www.tortue.me/emoji/+1.png ":+1:") b',
-            '![](http://www.tortue.me/emoji/smile.png ":smile:")a ',
-            'b ![](http://www.tortue.me/emoji/+1.png ":+1:")',
-            'a ![](http://www.tortue.me/emoji/+1.png ":+1:") b',
-            'a![](http://www.tortue.me/emoji/+1.png ":+1:")b',
-            ''
-        ].join('\n'));
-    });
-
-    t.end();
+  t.end();
 });
