@@ -1,6 +1,6 @@
 {
   "name": "remark-html-emoji-image",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Transform emoji unicodes into html images",
   "license": "MIT",
   "keywords": [
