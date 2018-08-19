@@ -1,20 +1,24 @@
 'use strict';
 
 var visit = require('unist-util-visit');
-var gemoji = require('gemoji');
 var escape = require('escape-string-regexp');
 
-module.exports = htmlEmojiImage;
+module.exports = textToImage;
 
-var regex = create();
-
-function htmlEmojiImage(options) {
+function textToImage(options) {
   var settings = options || {};
   var base = settings.base;
   var extname = settings.extname || '.png';
+  var list = settings.list;
+  var regex = settings.regex || /:\w+:/gi;
+  var classNames = settings.classNames || ['emoji'];
 
   if (!base) {
-    throw new Error('Missing `base` in options for `remark-html-emoji-image`');
+    throw new Error('Missing `base` in options for `remark-text-to-image`');
+  }
+
+  if (!list) {
+    throw new Error('Missing `list` in options for `remark-text-to-image`');
   }
 
   return transformer;
@@ -27,35 +31,42 @@ function htmlEmojiImage(options) {
     var definition = [];
     var lastIndex = 0;
     var match;
-    var unicode;
+    var code;
     var matchGemoji;
     var text;
     var last;
 
     while ((match = regex.exec(node.value)) !== null) {
-      unicode = match[0];
-      matchGemoji = gemoji.unicode[unicode];
+      code = match[0];
+      const key = match[0].replace(/:/g, '');
 
       if (match.index !== lastIndex) {
         definition.push(extractText(node.value, lastIndex, match.index));
       }
 
-      definition.push({
-        type: 'image',
-        url: base + matchGemoji.name + extname,
-        title: ':' + matchGemoji.name + ':',
-        data: {
-          hName: 'img',
-          hProperties: {
-            align: 'absmiddle',
-            alt: ':' + matchGemoji.name + ':',
-            className: ['emoji']
-          },
-          hChildren: []
-        }
-      });
+      if (list[key]) {
+        matchGemoji = {
+          name: key,
+          url: list[key],
+          alt: code
+        };
 
-      lastIndex = match.index + unicode.length;
+        definition.push({
+          type: 'image',
+          url: matchGemoji.url,
+          title: ':' + matchGemoji.name + ':',
+          data: {
+            hName: 'img',
+            hProperties: {
+              align: 'absmiddle',
+              alt: ':' + matchGemoji.alt + ':',
+              className: classNames
+            },
+            hChildren: []
+          }
+        });
+        lastIndex = match.index + code.length;
+      }
     }
 
     if (lastIndex !== node.value.length) {
@@ -87,23 +98,5 @@ function htmlEmojiImage(options) {
         }
       }
     };
-  }
-}
-
-function create() {
-  var unicode = gemoji.unicode;
-  var sources = [];
-  var key;
-
-  for (key in unicode) {
-    sources.push(escape(key));
-  }
-
-  sources.sort(sort);
-
-  return new RegExp(sources.join('|'), 'g');
-
-  function sort(a, b) {
-    return b.length - a.length;
   }
 }

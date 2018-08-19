@@ -3,5 +3,5 @@
 .nyc_output/
 coverage/
 node_modules/
-remark-html-emoji-image.js
-remark-html-emoji-image.min.js
+remark-text-to-image.js
+remark-text-to-image.min.js
