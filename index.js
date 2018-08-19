@@ -42,6 +42,7 @@ function textToImage(options) {
 
       if (match.index !== lastIndex) {
         definition.push(extractText(node.value, lastIndex, match.index));
+        lastIndex = match.index;
       }
 
       if (list[key]) {
